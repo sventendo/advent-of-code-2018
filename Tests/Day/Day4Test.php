@@ -2,15 +2,15 @@
 
 namespace Sventendo\AdventOfCode2018\Tests\Day;
 
-use Sventendo\AdventOfCode2018\Day\Day3;
+use Sventendo\AdventOfCode2018\Day\Day4;
 use Sventendo\AdventOfCode2018\Tests\TestCase;
 
-class Day3Test extends TestCase
+class Day4Test extends TestCase
 {
     public function setUp()
     {
-        $this->subject = $this->container->make(Day3::class);
-        $this->input = file_get_contents(__DIR__ . '/Day3/input.txt');
+        $this->subject = $this->container->make(Day4::class);
+        $this->input = file_get_contents(__DIR__ . '/Day4/input.txt');
     }
 
     /**
