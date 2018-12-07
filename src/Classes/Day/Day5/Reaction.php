@@ -16,7 +16,7 @@ class Reaction
         $this->polymer = $polymer;
     }
 
-    public function start()
+    public function startWithArray()
     {
         $currentLength = $this->getCurrentLength();
         $lastLength = 0;
@@ -38,12 +38,34 @@ class Reaction
         return $this->getCurrentLength();
     }
 
+    public function startWithPattern()
+    {
+        $currentLength = $this->getCurrentLength();
+        $lastLength = 0;
+
+        $pattern = $this->buildPattern();
+
+        while($currentLength !== $lastLength) {
+            $lastLength = $this->getCurrentLength();
+            $this->polymer = preg_replace($pattern, '', $this->polymer);
+            $currentLength = $this->getCurrentLength();
+        }
+
+        return $this->getCurrentLength();
+    }
+
     /**
      * @return int
      */
     public function getCurrentLength(): int
     {
         return strlen($this->getPolymer());
+    }
+
+    public function removeUnit(string $chr)
+    {
+        $pattern = '/[' . $chr . strtoupper($chr) . ']/';
+        $this->polymer = preg_replace($pattern, '', $this->polymer);
     }
 
     private function resetPolymer(): void
@@ -62,4 +84,15 @@ class Reaction
         return abs(ord($unitA) - ord($unitB)) === 32;
     }
 
+    private function buildPattern()
+    {
+        $patternBits = [];
+        for ($unitValue = ord('a'); $unitValue <= ord('z'); $unitValue++) {
+            $unitCombo = chr($unitValue) . chr($unitValue - 32);
+            $patternBits[] = $unitCombo;
+            $patternBits[] = strrev($unitCombo);
+        }
+
+        return '/' . implode('|', $patternBits) . '/';
+    }
 }
