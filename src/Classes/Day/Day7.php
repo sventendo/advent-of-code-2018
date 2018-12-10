@@ -36,7 +36,11 @@ class Day7 extends Day implements DayInterface
 
     public function secondPuzzle($input): string
     {
-        return '';
+        $this->parseInput($input);
+        $this->instructions->initializeWorkforce(4);
+        $this->instructions->followWithWorkforce();
+
+        return (string) $this->instructions->getTimer();
     }
 
     private function parseInput($input): void

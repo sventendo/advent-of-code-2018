@@ -48,4 +48,9 @@ class Step
     {
         return $this->next;
     }
+
+    public function getTimeNeeded()
+    {
+        return 60 + (ord($this->id) - ord('A') + 1);
+    }
 }

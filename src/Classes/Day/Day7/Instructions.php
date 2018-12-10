@@ -17,6 +17,20 @@ class Instructions
      * @var string[]
      */
     private $route = [];
+    /**
+     * @var Workforce
+     */
+    private $workforce;
+    /**
+     * @var int
+     */
+    private $timer = 0;
+
+    public function __construct(
+        Workforce $workforce
+    ) {
+        $this->workforce = $workforce;
+    }
 
     public function getRoute(): string
     {
@@ -40,6 +54,31 @@ class Instructions
         }
     }
 
+    public function followWithWorkforce(): void
+    {
+        $this->nextSteps = $this->getInitialSteps();
+
+        while ($this->notFinishedYet()) {
+            $this->workforce->makeTimePass();
+            $finishedSteps = $this->getFinishedSteps();
+            $this->addStepsToRoute($finishedSteps);
+            foreach ($finishedSteps as $step) {
+                $this->addToNextSteps($step->getNext());
+            }
+
+            $this->nextSteps = $this->sortSteps($this->nextSteps);
+            foreach ($this->nextSteps as $nextStepCandidate) {
+                if ($this->workforce->hasFreeWorkers() && $this->stepsFollowed($nextStepCandidate->getPrevious())) {
+                    $this->workforce->assignStepToAnyFreeWorker($nextStepCandidate);
+                    $this->removeFromNextSteps($nextStepCandidate);
+                }
+            }
+            if ($this->notFinishedYet()) {
+                $this->timer++;
+            }
+        }
+    }
+
     public function addStep(Step $step): void
     {
         $this->steps[] = $step;
@@ -53,6 +92,16 @@ class Instructions
             $stepPrevious->addNext($stepNext);
             $stepNext->addPrevious($stepPrevious);
         }
+    }
+
+    public function initializeWorkforce(int $numberOfWorkers)
+    {
+        $this->workforce->initializeWorkforce($numberOfWorkers);
+    }
+
+    public function getTimer(): int
+    {
+        return $this->timer;
     }
 
     private function addStepToRoute(Step $step)
@@ -91,16 +140,6 @@ class Instructions
         }
 
         return $initialSteps;
-    }
-
-    /**
-     * @param Step[] $steps
-     * @return mixed
-     */
-    private function getFirstOfSteps(array $steps): Step
-    {
-        $steps = $this->sortSteps($steps);
-        return $steps[0];
     }
 
     /**
@@ -158,5 +197,30 @@ class Instructions
             },
             $steps
         );
+    }
+
+    private function addStepsToRoute($steps): void
+    {
+        foreach ($steps as $step) {
+            $this->addStepToRoute($step);
+        }
+    }
+
+    /**
+     * @return Step[]
+     */
+    private function getFinishedSteps(): array
+    {
+        $finishedSteps = $this->workforce->getFinishedSteps();
+        $finishedSteps = $this->sortSteps($finishedSteps);
+        return $finishedSteps;
+    }
+
+    /**
+     * @return bool
+     */
+    private function notFinishedYet(): bool
+    {
+        return \count($this->route) < \count($this->steps);
     }
 }
