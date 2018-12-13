@@ -20,11 +20,11 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
      */
     protected $input;
 
-    public function __construct()
+    public function __construct($name = null, array $data = array(), $dataName = '')
     {
         require_once __DIR__ . '/../vendor/autoload.php';
-        parent::__construct();
         $this->container = new Container();
+        parent::__construct($name, $data, $dataName);
     }
 
     protected function print(string $output)

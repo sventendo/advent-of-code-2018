@@ -31,7 +31,11 @@ class Day8 extends Day implements DayInterface
 
     public function secondPuzzle($input): string
     {
-        return '';
+        $this->parseInput($input);
+        $this->tree->setData($this->data);
+        $this->tree->traverse();
+
+        return (string) $this->tree->getTotalValue();
     }
 
     private function parseInput($input)

@@ -73,4 +73,9 @@ class Tree
     {
         $this->sum += $value;
     }
+
+    public function getTotalValue(): int
+    {
+        return $this->root->collectValue();
+    }
 }
