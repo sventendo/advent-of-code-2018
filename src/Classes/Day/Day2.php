@@ -57,6 +57,8 @@ class Day2 extends Day implements DayInterface
                 }
             }
         }
+
+        return '';
     }
 
     private function parseInput($input)

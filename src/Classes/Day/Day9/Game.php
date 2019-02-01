@@ -72,20 +72,6 @@ class Game
         $this->board->push($round);
     }
 
-    private function getPosition(int $value)
-    {
-        $position = 0;
-        $boardSize = \count($this->board);
-        if ($boardSize > 0) {
-            $position = ($value + $boardSize) % $boardSize;
-            if ($position === 0) {
-                $position = $boardSize;
-            }
-        }
-
-        return $position;
-    }
-
     public function getBoard(): array
     {
         $length = $this->board->count();
@@ -147,17 +133,5 @@ class Game
         $marble = $this->board->pop();
         $this->keepMarble($marble);
         $this->board->push($this->board->shift());
-    }
-
-    private function printPlayerScores()
-    {
-        $scores = array_map(
-            function (Player $player) {
-                return $player->getScore();
-            },
-            $this->players
-        );
-
-        var_dump(implode(', ', $scores));
     }
 }
